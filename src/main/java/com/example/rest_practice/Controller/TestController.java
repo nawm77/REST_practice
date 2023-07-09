@@ -1,6 +1,5 @@
 package com.example.rest_practice.Controller;
 
-import com.example.rest_practice.Model.Customer;
 import com.example.rest_practice.Repo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +18,6 @@ public class TestController {
 
     @GetMapping()
     public String test(){
-        return repo.findAll().get(0).getDocumentInformation().getSeries().toString() + repo.findAll().get(1).getCcCVV().toString();
+        return repo.findAll().get(0).getDocumentInformation().getSeries().toString();
     }
 }
