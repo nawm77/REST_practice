@@ -16,7 +16,6 @@ public class RentRequest {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "rent_type")
     private RentType type;
-    //TODO свзяь many to many?l\
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer renter;
