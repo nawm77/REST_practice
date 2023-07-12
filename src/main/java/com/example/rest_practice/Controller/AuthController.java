@@ -3,8 +3,7 @@ package com.example.rest_practice.Controller;
 import com.example.rest_practice.Model.Customer;
 import com.example.rest_practice.Model.LoginRequest;
 import com.example.rest_practice.Model.LoginResponse;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,14 +15,14 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody @Validated LoginRequest request){
+    public LoginResponse login(@RequestBody @Valid LoginRequest request){
         return LoginResponse.builder()
                 .accessToken("smthng")
                 .build();
     }
 
     @PostMapping("/registration")
-    public ResponseEntity registrationCustomer(@RequestBody @Validated Customer customer){
-
+    public String registrationCustomer(@RequestBody @Valid Customer customer){
+        return "smt";
     }
 }

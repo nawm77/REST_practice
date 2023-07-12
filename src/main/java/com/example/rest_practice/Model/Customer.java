@@ -32,10 +32,13 @@ public class Customer {
     @NotBlank(message = "Email is required")
     private String email;
     @CreditCardNumber(message = "Invalid CC number")
+    @NotBlank(message = "Credit card number is required")
     private String ccNumber;
     @Pattern(regexp="^(0[1-9]|1[0-2])([\\/])([2-9][0-9])$", message="Must be formatted MM/YY")
+    @NotBlank(message = "Credit card expiration is required")
     private String ccExpiration;
     @Digits(integer=3, fraction=0, message="Invalid CVV")
+    @NotBlank(message = "Credit card CVV is required")
     private String ccCVV;
     private Double rate;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "customer")
