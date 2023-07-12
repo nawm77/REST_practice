@@ -1,6 +1,7 @@
 package com.example.rest_practice.Service.Impl;
 
 import com.example.rest_practice.Model.Customer;
+import com.example.rest_practice.Model.Role;
 import com.example.rest_practice.Repository.CustomerRepository;
 import com.example.rest_practice.Repository.RoleRepository;
 import com.example.rest_practice.Service.CustomerService;
@@ -43,7 +44,8 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     }
 
     public void createNewCustomer(Customer customer){
-        customer.setRole(List.of(roleRepository.findByName("ROLE_USER").get()));
+        Optional<Role> role = roleRepository.findByName("ROLE_USER");
+        role.ifPresent(value -> customer.setRole(List.of(value)));
         customerRepository.saveAndFlush(customer);
     }
 }

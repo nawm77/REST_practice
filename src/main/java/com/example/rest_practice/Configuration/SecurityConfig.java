@@ -1,6 +1,5 @@
 package com.example.rest_practice.Configuration;
 
-import com.example.rest_practice.Repository.CustomerRepository;
 import com.example.rest_practice.Security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
