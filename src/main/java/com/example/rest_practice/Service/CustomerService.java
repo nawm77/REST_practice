@@ -1,6 +1,6 @@
 package com.example.rest_practice.Service;
 
-import com.example.rest_practice.DuplicateUserException;
+import com.example.rest_practice.Exception.DuplicateUserException;
 import com.example.rest_practice.Model.Customer;
 
 import java.util.Optional;

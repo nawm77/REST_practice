@@ -1,6 +1,6 @@
 package com.example.rest_practice.Service.Impl;
 
-import com.example.rest_practice.DuplicateUserException;
+import com.example.rest_practice.Exception.DuplicateUserException;
 import com.example.rest_practice.Model.Customer;
 import com.example.rest_practice.Repository.CustomerRepository;
 import com.example.rest_practice.Repository.RoleRepository;
@@ -40,9 +40,7 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println(username);
         Customer customer = findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(String.format("Username '%s' isn't presented", username)));
-        System.out.println(customer.getUsername());
         return new User(customer.getUsername(),
                 customer.getPassword(),
                 customer.getRole()
@@ -58,8 +56,6 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
         customer.setRole(List.of(roleRepository.findById(1).get()));
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         customerRepository.saveAndFlush(customer);
-        System.out.println(customer.getRole() + " 1");
-        System.out.println(customer.getEmail());
         return jwtService.generateToken(customer);
     }
 }
