@@ -7,13 +7,18 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.CreditCardNumber;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "customer")
 @Data
-public class Customer {
+public class Customer implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,21 +30,18 @@ public class Customer {
     private String name;
     @NotBlank(message = "Surname is required")
     private String surname;
-    @Pattern(regexp = "\\d{10}", message = "Invalid phone number format")
-    @NotBlank(message = "Phone number is required")
-    private String phoneNumber;
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email is required")
     private String email;
-    @CreditCardNumber(message = "Invalid CC number")
-    @NotBlank(message = "Credit card number is required")
-    private String ccNumber;
-    @Pattern(regexp="^(0[1-9]|1[0-2])([\\/])([2-9][0-9])$", message="Must be formatted MM/YY")
-    @NotBlank(message = "Credit card expiration is required")
-    private String ccExpiration;
-    @Digits(integer=3, fraction=0, message="Invalid CVV")
-    @NotBlank(message = "Credit card CVV is required")
-    private String ccCVV;
+//    @CreditCardNumber(message = "Invalid CC number")
+//    @NotBlank(message = "Credit card number is required")
+//    private String ccNumber;
+//    @Pattern(regexp="^(0[1-9]|1[0-2])([\\/])([2-9][0-9])$", message="Must be formatted MM/YY")
+//    @NotBlank(message = "Credit card expiration is required")
+//    private String ccExpiration;
+//    @Digits(integer=3, fraction=0, message="Invalid CVV")
+//    @NotBlank(message = "Credit card CVV is required")
+//    private String ccCVV;
     private Double rate;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "customer")
     private DocumentInformation documentInformation;
@@ -48,11 +50,38 @@ public class Customer {
     @OneToMany(mappedBy = "renter", fetch = FetchType.EAGER)
     private List<RentRequest> rentList;
     private Integer rentCount;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return role.stream()
+                .map(r -> new SimpleGrantedAuthority(r.getName()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
