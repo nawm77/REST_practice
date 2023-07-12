@@ -1,5 +1,8 @@
 server:
   port: 8080
+jwt:
+  secret: secretKey
+  lifetime: 30m
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver

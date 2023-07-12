@@ -17,6 +17,10 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "Username is required")
+    private String username;
+    @NotBlank(message = "Password is required")
+    private String password;
     @NotBlank(message = "Name is required")
     private String name;
     @NotBlank(message = "Surname is required")
@@ -38,9 +42,14 @@ public class Customer {
     private DocumentInformation documentInformation;
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Bike> bikes;
-    @ManyToOne
-    @JoinColumn(name = "status_id", columnDefinition = "bigint default 1")
-    private Status status;
     @OneToMany(mappedBy = "renter", fetch = FetchType.EAGER)
     private List<RentRequest> rentList;
+    private Integer rentCount;
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> role;
 }
