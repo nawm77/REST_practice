@@ -1,7 +1,6 @@
 package com.example.rest_practice.Configuration;
 
 import com.example.rest_practice.Repository.CustomerRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,8 +1,5 @@
 package com.example.rest_practice.Model;
 
-import com.example.rest_practice.Model.Bike;
-import com.example.rest_practice.Model.Customer;
-import com.example.rest_practice.Model.RentType;
 import jakarta.persistence.*;
 import lombok.Data;
 
