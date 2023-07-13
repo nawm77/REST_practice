@@ -1,6 +1,5 @@
 package com.example.rest_practice.Model;
 
-import com.example.rest_practice.DTO.Request.RentRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

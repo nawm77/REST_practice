@@ -1,6 +1,5 @@
 package com.example.rest_practice.Model;
 
-import com.example.rest_practice.DTO.Request.RentRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 

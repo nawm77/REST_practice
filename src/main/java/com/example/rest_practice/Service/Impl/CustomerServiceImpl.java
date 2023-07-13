@@ -55,7 +55,7 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     }
     @Override
     public String createNewCustomer(Customer customer) throws DuplicateUserException{
-        if(customerRepository.findAllByUsername(customer.getUsername()).size()!=0){
+        if(customerRepository.findAllByUsername(customer.getUsername()).size()!=0 || customerRepository.findByEmail(customer.getEmail()).isPresent()){
             throw new DuplicateUserException("User with email: " + customer.getEmail() +" already exists in database");
         }
         customer.setRole(List.of(roleRepository.findById(1).get()));

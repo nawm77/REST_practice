@@ -1,26 +1,31 @@
 package com.example.rest_practice.Controller;
 
 import com.example.rest_practice.DTO.BikeDTO;
-import com.example.rest_practice.Model.Bike;
-import com.example.rest_practice.Model.RentStatus;
+import com.example.rest_practice.Mapper.BikeMapper;
 import com.example.rest_practice.Service.BikeService;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/bike")
 public class BikeController {
     private final BikeService bikeService;
+    private final BikeMapper bikeMapper;
 
     @Autowired
-    public BikeController(BikeService bikeService) {
+    public BikeController(BikeService bikeService, BikeMapper bikeMapper) {
         this.bikeService = bikeService;
+        this.bikeMapper = bikeMapper;
     }
 
+    @PermitAll
     @GetMapping("/list")
     public ResponseEntity<List<BikeDTO>> getAllBikes() {
         return new ResponseEntity<>(bikeService.findAll(), HttpStatus.FOUND);
@@ -32,38 +37,20 @@ public class BikeController {
     }
 
     @PostMapping("/")
-    public ResponseEntity saveBike(@RequestBody Bike bike) {
-        bikeService.saveBike(bike);
+    public ResponseEntity saveBike(@RequestBody BikeDTO bikeDTO, Principal principal) throws AccessDeniedException {
+        if(principal == null){
+            throw new AccessDeniedException("Invalid principal data");
+        }
+        bikeService.saveBike(bikeMapper.convertToBike(bikeDTO), principal);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity updateBike(@PathVariable("id") Long id, @RequestBody BikeDTO updatedBikeDTO) {
-        Bike existingBike = bikeService.findById(id);
-
-        if (existingBike == null) {
-            return ResponseEntity.notFound().build();
+    @PutMapping ("/{id}")
+    public ResponseEntity updateBike(@PathVariable("id") Long id, @RequestBody BikeDTO updatedBikeDTO, Principal principal) throws AccessDeniedException {
+        if(principal==null){
+            throw new AccessDeniedException("Invalid principal data");
         }
-
-        if (updatedBikeDTO.make() != null) {
-            existingBike.setMake(updatedBikeDTO.make());
-        }
-        if (updatedBikeDTO.model() != null) {
-            existingBike.setModel(updatedBikeDTO.model());
-        }
-        if (updatedBikeDTO.serialNumber() != null) {
-            existingBike.setSerialNumber(updatedBikeDTO.serialNumber());
-        }
-        if (updatedBikeDTO.costPerHour() != null) {
-            existingBike.setCostPerHour(updatedBikeDTO.costPerHour());
-        }
-        if (updatedBikeDTO.costPerDay() != null) {
-            existingBike.setCostPerDay(updatedBikeDTO.costPerDay());
-        }
-        if (updatedBikeDTO.status() != null) {
-            existingBike.setStatus(RentStatus.valueOf(updatedBikeDTO.status()));
-        }
-        bikeService.saveBike(existingBike);
+        bikeService.updateBikeInfo(id, updatedBikeDTO, principal);
         return ResponseEntity.ok().build();
     }
 }
