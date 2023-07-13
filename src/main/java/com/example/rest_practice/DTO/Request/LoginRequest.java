@@ -1,4 +1,4 @@
-package com.example.rest_practice.Model;
+package com.example.rest_practice.DTO.Request;
 
 import lombok.Builder;
 import lombok.Getter;

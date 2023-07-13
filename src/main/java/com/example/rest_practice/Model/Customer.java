@@ -1,9 +1,11 @@
 package com.example.rest_practice.Model;
 
+import com.example.rest_practice.DTO.Request.RentRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +16,8 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "customer")
-@Data
+@Getter
+@Setter
 public class Customer implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,5 +83,23 @@ public class Customer implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", rate=" + rate +
+                ", documentInformation=" + documentInformation +
+                ", bikes=" + bikes +
+                ", rentList=" + rentList +
+                ", rentCount=" + rentCount +
+                ", role=" + role +
+                '}';
     }
 }
