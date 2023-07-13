@@ -32,11 +32,10 @@ public class BikeServiceImpl implements BikeService {
 
     @Override
     public List<BikeDTO> findAll() {
-        List<BikeDTO> list = bikeRepository.findAll()
+        return bikeRepository.findAll()
                 .stream()
                 .map(mapper::convertToDTO)
                 .collect(Collectors.toList());
-        return list;
     }
 
     @Override
@@ -47,7 +46,7 @@ public class BikeServiceImpl implements BikeService {
     }
 
     @Override
-    public void saveBike(Bike bike, Principal principal) throws AccessDeniedException{
+    public void saveBike(Bike bike, Principal principal){
         bike.setStatus(RentStatus.AVAILABLE);
         bike.setCustomer(customerRepository.findByUsername(principal.getName()).get());
         bikeRepository.saveAndFlush(bike);
