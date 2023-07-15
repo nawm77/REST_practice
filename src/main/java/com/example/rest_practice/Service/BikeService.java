@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
-import java.security.Principal;
 import java.util.List;
 
 @Service
