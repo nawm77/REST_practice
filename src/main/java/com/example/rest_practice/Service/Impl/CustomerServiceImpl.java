@@ -72,12 +72,6 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
         return jwtService.generateToken(customer);
     }
     @Override
-    public String generateToken(UserDetails userDetails){
-        log.info("Generated new token for user " + userDetails.getUsername());
-        return jwtService.generateToken(userDetails);
-    }
-
-    @Override
     public Customer findCustomerByEmail(String email) throws UserNotFoundException {
         Optional<Customer> customer = customerRepository.findByEmail(email);
         if(customer.isPresent()){

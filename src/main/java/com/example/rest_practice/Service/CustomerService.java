@@ -12,7 +12,6 @@ import java.util.Optional;
 public interface CustomerService {
     Optional<Customer> findByUsername(String username);
     String createNewCustomer(Customer customer) throws DuplicateUserException;
-    String generateToken(UserDetails userDetails);
     Customer findCustomerByEmail(String email) throws UserNotFoundException;
     UserDetails loadUserByUsername(String username);
     List<CustomerDTO> findAll();
