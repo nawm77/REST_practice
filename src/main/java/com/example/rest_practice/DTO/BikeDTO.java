@@ -17,6 +17,6 @@ public class BikeDTO {
     private String status;
     private Long customerId;
     private String customerName;
-    private String customerLastname;
+    private String customerSurname;
     private String customerEmail;
 }

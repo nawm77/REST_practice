@@ -1,13 +1,14 @@
-package com.example.rest_practice.Mapper;
+package com.example.rest_practice.Mapper.Impl;
 
 import com.example.rest_practice.DTO.CustomerDTO;
+import com.example.rest_practice.Mapper.CustomerMapper;
 import com.example.rest_practice.Model.Customer;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomerMapperImpl {
+public class CustomerMapperImpl implements CustomerMapper {
     private final ModelMapper modelMapper;
 
     @Autowired

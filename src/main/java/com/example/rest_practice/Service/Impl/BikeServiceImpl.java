@@ -9,6 +9,7 @@ import com.example.rest_practice.Repository.CustomerRepository;
 import com.example.rest_practice.Service.BikeService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
@@ -46,11 +47,11 @@ public class BikeServiceImpl implements BikeService {
     }
 
     @Override
-    public void saveBike(Bike bike, Principal principal){
+    public void saveBike(Bike bike, UserDetails userDetails){
         bike.setStatus(RentStatus.AVAILABLE);
-        bike.setCustomer(customerRepository.findByUsername(principal.getName()).get());
+        bike.setCustomer(customerRepository.findByUsername(userDetails.getUsername()).get());
         bikeRepository.saveAndFlush(bike);
-        log.info("Successfully saved new bike " + mapper.convertToDTO(bike));
+        log.info("Successfully saved new bike " + mapper.convertToDTO(bike) + " by customer " + userDetails.getUsername());
     }
 
     @Override
@@ -59,13 +60,13 @@ public class BikeServiceImpl implements BikeService {
     }
 
     @Override
-    public void updateBikeInfo(Long id, BikeDTO updatedBikeDTO, Principal principal) throws AccessDeniedException {
+    public void updateBikeInfo(Long id, BikeDTO updatedBikeDTO, UserDetails userDetails) throws AccessDeniedException {
         Bike existingBike = findById(id);
 
         if (existingBike == null) {
             throw new IllegalArgumentException("Bike data is required");
         }
-        if (!principal.getName().equals(existingBike.getCustomer().getUsername()) || principal == null){
+        if (!userDetails.getUsername().equals(existingBike.getCustomer().getUsername()) ){
             throw new AccessDeniedException("You are not owner of bike with S/N " + updatedBikeDTO.getSerialNumber());
         }
 
@@ -87,7 +88,19 @@ public class BikeServiceImpl implements BikeService {
         if (updatedBikeDTO.getStatus() != null) {
             existingBike.setStatus(RentStatus.valueOf(updatedBikeDTO.getStatus()));
         }
-        saveBike(existingBike, principal);
-        log.info("User with username " + principal.getName() + " successfully changed information about " + mapper.convertToDTO(existingBike));
+        saveBike(existingBike, userDetails);
+        log.info("User with username " + userDetails.getUsername() + " successfully changed information about " + mapper.convertToDTO(existingBike));
+    }
+
+    @Override
+    public void deleteBikeById(Long id, UserDetails userDetails) throws AccessDeniedException {
+        if(!bikeRepository.findById(id).isPresent()){
+            throw new IllegalArgumentException("Bike with id " + id + " isn't presented");
+        }
+        if(bikeRepository.findById(id).get().getCustomer().getUsername().equals(userDetails.getUsername())){
+            bikeRepository.deleteById(id);
+        }else{
+            throw new AccessDeniedException("This isn't your bike");
+        }
     }
 }

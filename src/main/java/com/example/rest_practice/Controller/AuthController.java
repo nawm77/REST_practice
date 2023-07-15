@@ -1,10 +1,10 @@
 package com.example.rest_practice.Controller;
 
+import com.example.rest_practice.DTO.Request.LoginRequest;
 import com.example.rest_practice.DTO.Response.LoginResponse;
 import com.example.rest_practice.DTO.Response.RegistrationResponse;
 import com.example.rest_practice.Exception.DuplicateUserException;
 import com.example.rest_practice.Model.Customer;
-import com.example.rest_practice.DTO.Request.LoginRequest;
 import com.example.rest_practice.Service.CustomerService;
 import com.example.rest_practice.Service.LoginService;
 import jakarta.validation.Valid;
@@ -28,7 +28,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody @Valid LoginRequest request) throws Exception {
-        System.out.println(loginService.loginProcessor(request));
         return LoginResponse.builder()
                 .token(loginService.loginProcessor(request))
                 .build();

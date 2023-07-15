@@ -3,11 +3,13 @@ package com.example.rest_practice.ExceptionHandler;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +18,12 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<?> usernameNotFoundException(Exception ex) {
+        HttpStatus serverError = UNAUTHORIZED;
+        ApiException apiException = new ApiException(ex.getMessage(), serverError);
+        return new ResponseEntity<>(apiException, serverError);
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationException(MethodArgumentNotValidException ex) {
@@ -32,9 +40,9 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<?> jwtExpiredException(Exception ex) {
-        HttpStatus serverError = UNAUTHORIZED;
-        ApiException apiException = new ApiException(ex.getMessage(), serverError);
-        return new ResponseEntity<>(apiException, serverError);
+    public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException ex) {
+        String errorMessage = "JWT expired at " + ex.getClaims().getExpiration();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(errorMessage);
     }
 }

@@ -36,7 +36,8 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeRequests(registry -> registry
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/bike/").authenticated()
+                        .requestMatchers("/bike/edit/**", "/bike/delete/**").authenticated()
+                        .requestMatchers("/bike/list/**").permitAll()
                         .anyRequest().permitAll())
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

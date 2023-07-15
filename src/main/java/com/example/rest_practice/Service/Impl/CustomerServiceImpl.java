@@ -1,8 +1,9 @@
 package com.example.rest_practice.Service.Impl;
 
-import com.example.rest_practice.DTO.Request.LoginRequest;
+import com.example.rest_practice.DTO.CustomerDTO;
 import com.example.rest_practice.Exception.DuplicateUserException;
 import com.example.rest_practice.Exception.UserNotFoundException;
+import com.example.rest_practice.Mapper.CustomerMapper;
 import com.example.rest_practice.Model.Customer;
 import com.example.rest_practice.Repository.CustomerRepository;
 import com.example.rest_practice.Repository.RoleRepository;
@@ -29,13 +30,15 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     private final RoleRepository roleRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final CustomerMapper customerMapper;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository, RoleRepository roleRepository, JwtService jwtService, PasswordEncoder passwordEncoder) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, RoleRepository roleRepository, JwtService jwtService, PasswordEncoder passwordEncoder, CustomerMapper customerMapper) {
         this.customerRepository = customerRepository;
         this.roleRepository = roleRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
+        this.customerMapper = customerMapper;
     }
     public Optional<Customer> findByUsername(String username){
         return customerRepository.findByUsername(username);
@@ -45,7 +48,6 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Customer customer = findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(String.format("Username '%s' isn't presented", username)));
-        System.out.println(customer.getRole());
         return new User(customer.getUsername(),
                 customer.getPassword(),
                 customer.getRole()
@@ -53,6 +55,12 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
                         .map(role ->  new SimpleGrantedAuthority(role.getName()))
                         .toList());
     }
+
+    @Override
+    public List<CustomerDTO> findAll() {
+        return customerRepository.findAll().stream().map(customerMapper::convertToDTO).toList();
+    }
+
     @Override
     public String createNewCustomer(Customer customer) throws DuplicateUserException{
         if(customerRepository.findAllByUsername(customer.getUsername()).size()!=0 || customerRepository.findByEmail(customer.getEmail()).isPresent()){
@@ -79,11 +87,4 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
             throw new UserNotFoundException("User with email " + email + " wasn't found");
         }
     }
-
-    @Override
-    public Boolean loginProcessor(LoginRequest loginRequest) throws UserNotFoundException {
-        return findCustomerByEmail(loginRequest.getEmail()).getPassword().equals(passwordEncoder.encode(loginRequest.getPassword()));
-    }
-
-
 }

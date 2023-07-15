@@ -1,16 +1,17 @@
 package com.example.rest_practice.DTO;
 
-public record CustomerDTO(Long id, String name, String surname, String phoneNumber, String email, Double rate, Integer rentCount) {
-    @Override
-    public String toString() {
-        return "CustomerDTO{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", email='" + email + '\'' +
-                ", rate=" + rate +
-                ", rentCount=" + rentCount +
-                '}';
-    }
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class CustomerDTO {
+    private Long id;
+    private String username;
+    private String password;
+    private String name;
+    private String surname;
+    private String email;
 }

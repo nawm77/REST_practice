@@ -37,6 +37,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if(!request.getRequestURI().equals("/auth/login")){
+                log.info("Incorrect token value");
+            }
             filterChain.doFilter(request, response);
             return;
         }
