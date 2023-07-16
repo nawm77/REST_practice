@@ -44,7 +44,9 @@ public class RentServiceImpl implements RentService {
     @Override
     public void startRent(RentRequestDTO rentRequestDTO, UserDetails userDetails) throws Exception {
         if (bikeRepository.findBikeBySerialNumber(rentRequestDTO.getBikeSerialNumber()).getStatus().equals(RentStatus.AVAILABLE)) {
-            rentRepository.save(rentRequestMapper.toRentRequest(rentRequestDTO, userDetails));
+            RentRequest r = rentRequestMapper.toRentRequest(rentRequestDTO, userDetails);
+            r.setTimeStart(LocalDateTime.now());
+            rentRepository.save(r);
             bikeRepository.setUnavailableStatus(rentRequestDTO.getBikeSerialNumber());
         } else {
             throw new Exception("Bike isn't available now for rental");
@@ -64,7 +66,7 @@ public class RentServiceImpl implements RentService {
     @Override
     public RentStopResponse stopRentById(Long id, UserDetails userDetails, LocalDateTime time) throws AccessDeniedException {
         RentRequest r = rentRepository.findById(id).get();
-        if (!r.getRenter().getUsername().equals(userDetails.getUsername())) {
+        if (!r.getRenter().getUsername().equals(userDetails.getUsername()) || r.getTimeEnd()!=null) {
             throw new AccessDeniedException("You can't stop this rental");
         } else {
             double price = 0;
@@ -87,6 +89,9 @@ public class RentServiceImpl implements RentService {
                     price = (days * 24 + hours) * r.getBike().getCostPerHour();
                     totalTime = days * 24 + hours + " hours";
                 }
+            }
+            if(price==0){
+                price = r.getBike().getCostPerHour();
             }
             r.setTimeEnd(time);
             bikeRepository.setAvailableStatus(r.getBike().getSerialNumber());

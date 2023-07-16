@@ -36,7 +36,7 @@ public class RentController {
         rentService.deleteById(id, userDetails);
         return ResponseEntity.ok().build();
     }
-    @PutMapping("/stop/{id}")
+    @PostMapping("/stop/{id}")
     public ResponseEntity<RentStopResponse> editRentById(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) throws AccessDeniedException {
         return ResponseEntity.ok(rentService.stopRentById(id, userDetails, LocalDateTime.now()));
     }
