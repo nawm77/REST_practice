@@ -35,16 +35,14 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final CustomerMapper customerMapper;
-    private final EntityManager entityManager;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository, RoleRepository roleRepository, JwtService jwtService, PasswordEncoder passwordEncoder, CustomerMapper customerMapper, EntityManager entityManager) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, RoleRepository roleRepository, JwtService jwtService, PasswordEncoder passwordEncoder, CustomerMapper customerMapper) {
         this.customerRepository = customerRepository;
         this.roleRepository = roleRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.customerMapper = customerMapper;
-        this.entityManager = entityManager;
     }
     public Optional<Customer> findByUsername(String username){
         return customerRepository.findByUsername(username);
