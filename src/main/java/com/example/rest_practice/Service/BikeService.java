@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface BikeService {
@@ -17,4 +18,5 @@ public interface BikeService {
     void updateBikeInfo(Long id, BikeDTO dto, UserDetails userDetails) throws AccessDeniedException;
     void deleteBikeById(Long id, UserDetails userDetails) throws AccessDeniedException;
     void rentBikeById(Long id, UserDetails userDetails);
+    Bike findBikeBySerialNumber(String serialNumber);
 }

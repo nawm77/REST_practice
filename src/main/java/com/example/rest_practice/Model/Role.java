@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -14,5 +16,5 @@ public class Role {
     private Integer id;
     private String name;
     @ManyToMany(mappedBy = "role", cascade = CascadeType.ALL)
-    private List<Customer> customer = new ArrayList<>();
+    private Set<Customer> customer = new HashSet<>();
 }

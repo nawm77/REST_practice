@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -87,7 +89,7 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     public void setCustomerRole(Long id) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("No such user"));
         Customer fin = new Customer();
-        fin.setRole(List.of(roleRepository.findById(2).get()));
+        fin.setRole(Set.of(roleRepository.findById(2).get()));
         customer.getRole().addAll(
                 fin
                         .getRole().stream().map(r -> {
@@ -104,7 +106,7 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
         if(customerRepository.findAllByUsername(customer.getUsername()).size()!=0 || customerRepository.findByEmail(customer.getEmail()).isPresent()){
             throw new DuplicateUserException("User with email: " + customer.getEmail() +" already exists in database");
         }
-        customer.setRole(List.of(roleRepository.findById(1).get()));
+        customer.setRole(Set.of(roleRepository.findById(1).get()));
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         customerRepository.saveAndFlush(customer);
         return jwtService.generateToken(customer);

@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class BikeDTO {
-
     private String make;
     private String model;
     private String serialNumber;

@@ -27,16 +27,8 @@ public class DocumentServiceImpl implements DocumentService {
             throw new DocumentAlreadyExistsException("Document for user with id "+ id + " already exists");
         } else{
             DocumentInformation doc = documentMapper.toDocument(dto, id);
-            System.out.println(doc.getCustomer().getUsername());
-            System.out.println(doc.getIssueDate());
-            System.out.println(doc.getNumber());
             documentRepository.save(doc);
             customerService.setCustomerRole(id);
         }
-    }
-
-    @Override
-    public DocumentDTO print() {
-        return documentMapper.toDTO(documentRepository.findAll().get(0));
     }
 }

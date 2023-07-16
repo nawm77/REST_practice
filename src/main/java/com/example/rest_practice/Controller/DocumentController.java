@@ -19,9 +19,7 @@ public class DocumentController {
 
     @PostMapping("/approve/{id}")
     public ResponseEntity<?> approveDocumentById(@PathVariable("id") Long id, @RequestBody DocumentDTO dto) throws DocumentAlreadyExistsException {
-        System.out.println(dto.getIssueDate());
-        System.out.println(dto.getNumber());
         documentService.addNewDocumentByCustomerId(id, dto);
-        return ResponseEntity.ok(documentService.print());
+        return ResponseEntity.ok().build();
     }
 }

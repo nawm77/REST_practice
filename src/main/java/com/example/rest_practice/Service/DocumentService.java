@@ -5,6 +5,4 @@ import com.example.rest_practice.Exception.DocumentAlreadyExistsException;
 
 public interface DocumentService {
     void addNewDocumentByCustomerId(Long id, DocumentDTO dto) throws DocumentAlreadyExistsException;
-
-    DocumentDTO print();
 }

@@ -39,6 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/bike/edit/**", "/bike/delete/**").authenticated()
                         .requestMatchers("/bike/list/**").permitAll()
                         .requestMatchers("/customer/**").hasRole("ADMIN")
+                        .requestMatchers("/document/**").authenticated()
+                        .requestMatchers("/rent/**").hasRole("CUSTOMER")
                         .anyRequest().permitAll())
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

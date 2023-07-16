@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -106,5 +107,10 @@ public class BikeServiceImpl implements BikeService {
     @Override
     public void rentBikeById(Long id, UserDetails userDetails) {
 
+    }
+
+    @Override
+    public Bike findBikeBySerialNumber(String serialNumber) {
+        return bikeRepository.findBikeBySerialNumber(serialNumber);
     }
 }
