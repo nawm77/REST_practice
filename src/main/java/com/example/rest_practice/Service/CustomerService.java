@@ -7,6 +7,7 @@ import com.example.rest_practice.Model.Customer;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public interface CustomerService {
@@ -15,4 +16,8 @@ public interface CustomerService {
     Customer findCustomerByEmail(String email) throws UserNotFoundException;
     UserDetails loadUserByUsername(String username);
     List<CustomerDTO> findAll();
+    Customer findById(Long id) throws NoSuchElementException;
+    void blockCustomerById(Long id);
+    void unblockCustomerById(Long id);
+    void setCustomerRole(Long id);
 }

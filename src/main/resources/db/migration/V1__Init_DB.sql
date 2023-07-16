@@ -1,7 +1,7 @@
 create table bike (id bigserial not null, cost_per_day float(53), cost_per_hour float(53), make varchar(255), model varchar(255), serial_number varchar(255) unique, status varchar(255) check (status in ('AVAILABLE','RENTED','UNAVAILABLE')), owner_id bigint, primary key (id));
-create table customer (id bigserial not null, email varchar(255), name varchar(255), password varchar(255), rate float(53), rent_count integer, surname varchar(255), username varchar(255), primary key (id));
+create table customer (id bigserial not null, email varchar(255), name varchar(255), password varchar(255), is_non_blocked bool default true, surname varchar(255), username varchar(255), primary key (id));
 create table document_information (id bigserial not null, issue_date timestamp(6), number integer, series integer, customer_id bigint, primary key (id));
-create table rent_request (id bigserial not null, time_start timestamp(6), rent_type varchar(255) check (rent_type in ('HOUR','DAY')), bike_id bigint, customer_id bigint, primary key (id));
+create table rent_request (id bigserial not null, time_start timestamp(6), time_end timestamp(6), rent_type varchar(255) check (rent_type in ('HOUR','DAY')), bike_id bigint, customer_id bigint, primary key (id));
 create table role (id serial not null, name varchar(255), primary key (id));
 create table users_roles (role_id integer not null, user_id bigint not null);
 alter table if exists bike add constraint FKt9wuhid45wo6chotxfh35oikf foreign key (owner_id) references customer;

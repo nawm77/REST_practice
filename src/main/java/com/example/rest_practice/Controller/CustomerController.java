@@ -1,28 +1,42 @@
 package com.example.rest_practice.Controller;
 
 import com.example.rest_practice.DTO.CustomerDTO;
+import com.example.rest_practice.Mapper.CustomerMapper;
 import com.example.rest_practice.Service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
     private final CustomerService customerService;
+    private final CustomerMapper customerMapper;
 
     @Autowired
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService, CustomerMapper customerMapper) {
         this.customerService = customerService;
+        this.customerMapper = customerMapper;
     }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/list")
     public ResponseEntity<List<CustomerDTO>> getAllCustomers(){
         return ResponseEntity.ok(customerService.findAll());
+    }
+    @GetMapping("/list/{id}")
+    public ResponseEntity<?> getCustomerById(@PathVariable("id") Long id) throws NoSuchElementException {
+        return ResponseEntity.ok(customerMapper.convertToDTO(customerService.findById(id)));
+    }
+    @PostMapping("/block/{id}")
+    public ResponseEntity<?> blockCustomerById(@PathVariable("id") Long id){
+        customerService.blockCustomerById(id);
+        return ResponseEntity.ok().build();
+    }
+    @PostMapping("/unblock/{id}")
+    public ResponseEntity<?> unblockCustomerById(@PathVariable("id") Long id){
+        customerService.unblockCustomerById(id);
+        return ResponseEntity.ok().build();
     }
 }

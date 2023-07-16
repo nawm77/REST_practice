@@ -5,10 +5,12 @@ import com.example.rest_practice.Exception.DuplicateUserException;
 import com.example.rest_practice.Exception.UserNotFoundException;
 import com.example.rest_practice.Mapper.CustomerMapper;
 import com.example.rest_practice.Model.Customer;
+import com.example.rest_practice.Model.Role;
 import com.example.rest_practice.Repository.CustomerRepository;
 import com.example.rest_practice.Repository.RoleRepository;
 import com.example.rest_practice.Service.CustomerService;
 import com.example.rest_practice.Service.JwtService;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +22,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -31,14 +36,16 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final CustomerMapper customerMapper;
+    private final EntityManager entityManager;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository, RoleRepository roleRepository, JwtService jwtService, PasswordEncoder passwordEncoder, CustomerMapper customerMapper) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, RoleRepository roleRepository, JwtService jwtService, PasswordEncoder passwordEncoder, CustomerMapper customerMapper, EntityManager entityManager) {
         this.customerRepository = customerRepository;
         this.roleRepository = roleRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.customerMapper = customerMapper;
+        this.entityManager = entityManager;
     }
     public Optional<Customer> findByUsername(String username){
         return customerRepository.findByUsername(username);
@@ -59,6 +66,39 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     @Override
     public List<CustomerDTO> findAll() {
         return customerRepository.findAll().stream().map(customerMapper::convertToDTO).toList();
+    }
+
+    @Override
+    public Customer findById(Long id) throws NoSuchElementException {
+        return customerRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("User wasn't found"));
+    }
+
+    @Override
+    public void blockCustomerById(Long id) {
+        customerRepository.blockCustomerById(id);
+    }
+
+    @Override
+    public void unblockCustomerById(Long id) {
+        customerRepository.unblockCustomerById(id);
+    }
+
+    @Transactional
+    @Override
+    public void setCustomerRole(Long id) {
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("No such user"));
+        Customer fin = new Customer();
+        fin.setRole(List.of(roleRepository.findById(2).get()));
+        customer.getRole().addAll(
+                fin
+                        .getRole().stream().map(r -> {
+                            Role rr = roleRepository.findById(r.getId()).get();
+                            rr.getCustomer().add(customer);
+                            return rr;
+                        }).toList()
+        );
+        customerRepository.save(customer);
     }
 
     @Override

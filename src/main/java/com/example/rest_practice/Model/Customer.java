@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,21 +42,22 @@ public class Customer implements UserDetails {
 //    @Digits(integer=3, fraction=0, message="Invalid CVV")
 //    @NotBlank(message = "Credit card CVV is required")
 //    private String ccCVV;
-    private Double rate;
+//    private Double rate;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "customer")
     private DocumentInformation documentInformation;
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Bike> bikes;
     @OneToMany(mappedBy = "renter", fetch = FetchType.EAGER)
     private List<RentRequest> rentList;
-    private Integer rentCount;
-    @ManyToMany(fetch = FetchType.EAGER)
+//    private Integer rentCount;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> role;
+    private List<Role> role = new ArrayList<>();
+    private Boolean isNonBlocked;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -71,7 +73,7 @@ public class Customer implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.isNonBlocked;
     }
 
     @Override
@@ -93,11 +95,9 @@ public class Customer implements UserDetails {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
-                ", rate=" + rate +
                 ", documentInformation=" + documentInformation +
                 ", bikes=" + bikes +
                 ", rentList=" + rentList +
-                ", rentCount=" + rentCount +
                 ", role=" + role +
                 '}';
     }

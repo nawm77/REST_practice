@@ -13,6 +13,7 @@ public class RentRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime timeStart;
+    private LocalDateTime timeEnd;
     @Enumerated(value = EnumType.STRING)
     @Column(name = "rent_type")
     private RentType type;

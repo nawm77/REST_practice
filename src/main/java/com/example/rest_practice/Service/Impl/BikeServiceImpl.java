@@ -103,4 +103,9 @@ public class BikeServiceImpl implements BikeService {
             throw new AccessDeniedException("This isn't your bike");
         }
     }
+
+    @Override
+    public void rentBikeById(Long id, UserDetails userDetails) {
+
+    }
 }
