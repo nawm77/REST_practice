@@ -67,26 +67,12 @@ public class RentServiceImpl implements RentService {
         if (!r.getRenter().getUsername().equals(userDetails.getUsername())) {
             throw new AccessDeniedException("You can't stop this rental");
         } else {
-//            double price=0;
-//            switch (r.getType()){
-//                case DAY:
-//                    long days = r.getTimeStart().until(time, ChronoUnit.DAYS);
-//                    long hours = r.getTimeStart().until(time, ChronoUnit.DAYS)%24;
-//                    price = (days+hours>0?1:0)*r.getBike().getCostPerDay();
-//                    break;
-//                case HOUR:
-//                    long hoursH = r.getTimeStart().until(time, ChronoUnit.DAYS) % 24;
-//                    long daysH = r.getTimeStart().until(time, ChronoUnit.DAYS);
-//                    price = (daysH*24+hoursH)*r.getBike().getCostPerHour();
-//                    break;
-//
-//            }
             double price = 0;
             double days = 0;
             double hours = 0;
             String totalTime = "";
             switch (r.getType()) {
-                case DAY:
+                case DAY -> {
                     days = r.getTimeStart().until(time, ChronoUnit.DAYS);
                     hours = r.getTimeStart().until(time, ChronoUnit.HOURS) % 24;
                     System.out.println(days);
@@ -94,13 +80,13 @@ public class RentServiceImpl implements RentService {
                     long addH = hours > 0 ? 1 : 0;
                     price = (days + addH) * r.getBike().getCostPerDay();
                     totalTime = days + " days and " + hours + " hours";
-                    break;
-                case HOUR:
+                }
+                case HOUR -> {
                     hours = r.getTimeStart().until(time, ChronoUnit.HOURS) % 24;
                     days = r.getTimeStart().until(time, ChronoUnit.DAYS);
                     price = (days * 24 + hours) * r.getBike().getCostPerHour();
-                    totalTime = days*24 + hours + " hours";
-                    break;
+                    totalTime = days * 24 + hours + " hours";
+                }
             }
             r.setTimeEnd(time);
             bikeRepository.setAvailableStatus(r.getBike().getSerialNumber());

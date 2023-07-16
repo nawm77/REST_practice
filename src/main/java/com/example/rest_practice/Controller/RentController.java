@@ -2,7 +2,6 @@ package com.example.rest_practice.Controller;
 
 import com.example.rest_practice.DTO.RentRequestDTO;
 import com.example.rest_practice.DTO.Response.RentStopResponse;
-import com.example.rest_practice.RestPracticeApplication;
 import com.example.rest_practice.Service.RentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

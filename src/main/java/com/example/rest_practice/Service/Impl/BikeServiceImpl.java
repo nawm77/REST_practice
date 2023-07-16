@@ -94,7 +94,7 @@ public class BikeServiceImpl implements BikeService {
 
     @Override
     public void deleteBikeById(Long id, UserDetails userDetails) throws AccessDeniedException {
-        if(!bikeRepository.findById(id).isPresent()){
+        if(bikeRepository.findById(id).isEmpty()){
             throw new IllegalArgumentException("Bike with id " + id + " isn't presented");
         }
         if(bikeRepository.findById(id).get().getCustomer().getUsername().equals(userDetails.getUsername())){
@@ -103,12 +103,6 @@ public class BikeServiceImpl implements BikeService {
             throw new AccessDeniedException("This isn't your bike");
         }
     }
-
-    @Override
-    public void rentBikeById(Long id, UserDetails userDetails) {
-
-    }
-
     @Override
     public Bike findBikeBySerialNumber(String serialNumber) {
         return bikeRepository.findBikeBySerialNumber(serialNumber);
