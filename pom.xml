@@ -178,6 +178,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>bike-sharing</finalName>
     </build>
 
 </project>

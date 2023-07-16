@@ -13,6 +13,20 @@ services:
     ports:
       - "5432:5432"
     restart: always
+  sharing:
+    container_name: share_service
+    image: shareservice:1.0.0
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURSE_PASSWORD: root
+      SPRING_DATASOURSE_USERNAME: postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bikeShare
+      SPRING_JPA_HIBERNATE_DDL-AUTO: none
+      SPRING_FLYWAY_ENABLED: true
+    depends_on:
+      - postgres
 
 volumes:
   postgres:
+

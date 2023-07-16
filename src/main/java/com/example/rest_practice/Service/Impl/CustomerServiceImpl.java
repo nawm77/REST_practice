@@ -10,7 +10,6 @@ import com.example.rest_practice.Repository.CustomerRepository;
 import com.example.rest_practice.Repository.RoleRepository;
 import com.example.rest_practice.Service.CustomerService;
 import com.example.rest_practice.Service.JwtService;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +104,7 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
         }
         customer.setRole(Set.of(roleRepository.findById(1).get()));
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
+        customer.setIsNonBlocked(true);
         customerRepository.saveAndFlush(customer);
         return jwtService.generateToken(customer);
     }
