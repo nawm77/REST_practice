@@ -2,6 +2,7 @@ package com.example.rest_practice.Configuration;
 
 import com.example.rest_practice.Repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

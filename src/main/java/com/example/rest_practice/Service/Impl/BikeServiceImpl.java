@@ -7,6 +7,7 @@ import com.example.rest_practice.Model.RentStatus;
 import com.example.rest_practice.Repository.BikeRepository;
 import com.example.rest_practice.Repository.CustomerRepository;
 import com.example.rest_practice.Service.BikeService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,18 +33,22 @@ public class BikeServiceImpl implements BikeService {
     }
 
     @Override
-    public List<BikeDTO> findAll() {
+    public List<BikeDTO> findAllAvailableBikes() {
         return bikeRepository.findAll()
                 .stream()
+                .filter(bike -> bike.getStatus().equals(RentStatus.AVAILABLE))
                 .map(mapper::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public BikeDTO findBikeById(Long id) {
-        return mapper.convertToDTO(
-                bikeRepository.findById(id).get()
-        );
+        Optional<Bike> b = bikeRepository.findById(id);
+        if(b.isPresent()){
+            return mapper.convertToDTO(b.get());
+        } else{
+            throw new EntityNotFoundException("No such bike with id " + id);
+        }
     }
 
     @Override
@@ -93,11 +99,12 @@ public class BikeServiceImpl implements BikeService {
 
     @Override
     public void deleteBikeById(Long id, UserDetails userDetails) throws AccessDeniedException {
-        if(bikeRepository.findById(id).isEmpty()){
+        Optional<Bike> b = bikeRepository.findById(id);
+        if(b.isEmpty()){
             throw new IllegalArgumentException("Bike with id " + id + " isn't presented");
         }
         if(bikeRepository.findById(id).get().getCustomer().getUsername().equals(userDetails.getUsername())){
-            bikeRepository.deleteById(id);
+            bikeRepository.setUnavailableStatusBySerialNumber(b.get().getSerialNumber());
         }else{
             throw new AccessDeniedException("This isn't your bike");
         }

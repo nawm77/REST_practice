@@ -27,8 +27,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody @Valid LoginRequest request) throws Exception {
-        System.out.println(request.getEmail() + " " + request.getPassword());
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) throws Exception {
         return LoginResponse.builder()
                 .token(loginService.loginProcessor(request))
                 .build();

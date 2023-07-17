@@ -4,6 +4,7 @@ import com.example.rest_practice.DTO.BikeDTO;
 import com.example.rest_practice.Mapper.BikeMapper;
 import com.example.rest_practice.Service.BikeService;
 import jakarta.annotation.security.PermitAll;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class BikeController {
     @PermitAll
     @GetMapping("/list")
     public ResponseEntity<List<BikeDTO>> getAllBikes() {
-        return new ResponseEntity<>(bikeService.findAll(), HttpStatus.FOUND);
+        return new ResponseEntity<>(bikeService.findAllAvailableBikes(), HttpStatus.FOUND);
     }
 
     @PermitAll
@@ -40,19 +41,18 @@ public class BikeController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> saveBike(@RequestBody BikeDTO bikeDTO, @AuthenticationPrincipal UserDetails userDetails) throws AccessDeniedException {
+    public ResponseEntity<?> saveBike(@RequestBody @Valid BikeDTO bikeDTO, @AuthenticationPrincipal UserDetails userDetails) throws AccessDeniedException {
         bikeService.saveBike(bikeMapper.convertToBike(bikeDTO), userDetails);
         return ResponseEntity.ok().build();
     }
     @PutMapping ("/edit/{id}")
-    public ResponseEntity<?> updateBike(@PathVariable("id") Long id, @RequestBody BikeDTO updatedBikeDTO, @AuthenticationPrincipal UserDetails userDetails) throws AccessDeniedException {
+    public ResponseEntity<?> updateBike(@PathVariable("id") Long id, @RequestBody @Valid BikeDTO updatedBikeDTO, @AuthenticationPrincipal UserDetails userDetails) throws AccessDeniedException {
         bikeService.updateBikeInfo(id, updatedBikeDTO, userDetails);
         return ResponseEntity.ok().build();
     }
     @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteBikeById(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) throws AccessDeniedException {
-        System.out.println(userDetails.getUsername() + " " + userDetails.getPassword());
         bikeService.deleteBikeById(id, userDetails);
         return ResponseEntity.ok().build();
     }

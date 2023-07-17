@@ -3,6 +3,7 @@ package com.example.rest_practice.Controller;
 import com.example.rest_practice.DTO.RentRequestDTO;
 import com.example.rest_practice.DTO.Response.RentStopResponse;
 import com.example.rest_practice.Service.RentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,7 +28,7 @@ public class RentController {
         return ResponseEntity.ok(rentService.findAllByCustomer(userDetails));
     }
     @PostMapping("/start")
-    public ResponseEntity<?> addNewRequest(@RequestBody RentRequestDTO dto, @AuthenticationPrincipal UserDetails userDetails) throws Exception {
+    public ResponseEntity<?> addNewRequest(@RequestBody @Valid RentRequestDTO dto, @AuthenticationPrincipal UserDetails userDetails) throws Exception {
         rentService.startRent(dto, userDetails);
         return ResponseEntity.ok().build();
     }

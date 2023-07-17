@@ -6,20 +6,27 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BikeRepository extends JpaRepository<Bike, Long> {
-    @Query("select b from Bike b where b.serialNumber = :number")
-    Bike findBikeBySerialNumber(@Param("number") String number);
+//    @Query("select b from Bike b where b.serialNumber = :number")
+//    Bike findBikeBySerialNumber(@Param("number") String number);
+    Bike findBikeBySerialNumber(String number);
 
     @Transactional
     @Modifying
     @Query("UPDATE Bike b set b.status='RENTED' where b.serialNumber= :number")
-    void setUnavailableStatus(@Param("number") String number);
+    void setRentedStatus(@Param("number") String number);
 
     @Transactional
     @Modifying
     @Query("UPDATE Bike b set b.status='AVAILABLE' where b.serialNumber= :number")
     void setAvailableStatus(@Param("number")String serialNumber);
+
+    @Transactional
+    @Modifying
+    @Query("update Bike b set b.status='UNAVAILABLE' where b.serialNumber= :number")
+    void setUnavailableStatusBySerialNumber(@Param("number") String number);
 }

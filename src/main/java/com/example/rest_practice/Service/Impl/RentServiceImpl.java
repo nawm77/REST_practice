@@ -47,7 +47,7 @@ public class RentServiceImpl implements RentService {
             RentRequest r = rentRequestMapper.toRentRequest(rentRequestDTO, userDetails);
             r.setTimeStart(LocalDateTime.now());
             rentRepository.save(r);
-            bikeRepository.setUnavailableStatus(rentRequestDTO.getBikeSerialNumber());
+            bikeRepository.setRentedStatus(rentRequestDTO.getBikeSerialNumber());
         } else {
             throw new Exception("Bike isn't available now for rental");
         }

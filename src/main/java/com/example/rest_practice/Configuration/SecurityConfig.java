@@ -36,11 +36,11 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeRequests(registry -> registry
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/bike/edit/**", "/bike/delete/**").authenticated()
+                        .requestMatchers("/bike/edit/**", "/bike/delete/**", "/bike/add/**").authenticated()
                         .requestMatchers("/bike/list/**").permitAll()
                         .requestMatchers("/customer/**").hasRole("ADMIN")
                         .requestMatchers("/document/**").authenticated()
-                        .requestMatchers("/rent/**").hasRole("CUSTOMER")
+                        .requestMatchers("/rent/**").hasAnyRole("CUSTOMER", "ADMIN")
                         .anyRequest().permitAll())
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
