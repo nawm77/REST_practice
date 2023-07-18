@@ -32,6 +32,7 @@ public class BikeServiceImpl implements BikeService {
         this.customerRepository = customerRepository;
     }
 
+    //TODO что быстрее - через ЯП или через БД
     @Override
     public List<BikeDTO> findAllAvailableBikes() {
         return bikeRepository.findAll()
@@ -65,13 +66,21 @@ public class BikeServiceImpl implements BikeService {
             updateBikeInfo(existingBike.getId(), mapper.convertToDTO(bike), userDetails);
             log.info("User " + userDetails.getUsername() + " successfully update status to " + bike.getStatus() + " for bike " + bike.getSerialNumber());
         } else {
+            log.info("User " + userDetails.getUsername() + " tried to save exist bike " + b.get().getSerialNumber());
             throw new AccessDeniedException("Bike with S/N: " + b.get().getSerialNumber() + " already exists");
         }
     }
 
     @Override
     public Bike findById(Long id) {
-        return bikeRepository.findById(id).get();
+        Optional<Bike> b = bikeRepository.findById(id);
+        if(b.isPresent()) {
+            log.info("Successfully found bike with id " + b.get().getId());
+            return b.get();
+        } else{
+            log.info("No such bike with id " + id);
+            throw new EntityNotFoundException("No such bike with id " + id);
+        }
     }
 
     @Override
@@ -79,9 +88,11 @@ public class BikeServiceImpl implements BikeService {
         Bike existingBike = findById(id);
 
         if (existingBike == null) {
+            log.info("Incorrect bike id " + id);
             throw new IllegalArgumentException("Bike data is required");
         }
         if (!userDetails.getUsername().equals(existingBike.getCustomer().getUsername())) {
+            log.info("User " + userDetails.getUsername() + " tries to get access to bike " + existingBike.getSerialNumber());
             throw new AccessDeniedException("You are not owner of bike with S/N " + updatedBikeDTO.getSerialNumber());
         }
 
@@ -111,9 +122,11 @@ public class BikeServiceImpl implements BikeService {
     public void deleteBikeById(Long id, UserDetails userDetails) throws AccessDeniedException {
         Optional<Bike> b = bikeRepository.findById(id);
         if (b.isEmpty()) {
+            log.info("Bike with id " + id + " isn't presented");
             throw new IllegalArgumentException("Bike with id " + id + " isn't presented");
         }
         if (bikeRepository.findById(id).get().getCustomer().getUsername().equals(userDetails.getUsername())) {
+            log.info("Bike with S/N " + b.get().getSerialNumber() + " now Unavailable to rental");
             bikeRepository.setUnavailableStatusBySerialNumber(b.get().getSerialNumber());
         } else {
             throw new AccessDeniedException("This isn't your bike");
