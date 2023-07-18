@@ -29,7 +29,7 @@ public class CustomerController {
 
     @GetMapping("/list/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable("id") Long id) throws NoSuchElementException {
-        return ResponseEntity.ok(customerMapper.convertToDTO(customerService.findById(id)));
+        return ResponseEntity.status(200).body(customerMapper.convertToDTO(customerService.findById(id)));
     }
 
     @PostMapping("/block/{id}")

@@ -30,15 +30,15 @@ public class RentController {
     @PostMapping("/start")
     public ResponseEntity<?> addNewRequest(@RequestBody @Valid RentRequestDTO dto, @AuthenticationPrincipal UserDetails userDetails) throws Exception {
         rentService.startRent(dto, userDetails);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(201).build();
     }
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteRentById(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) throws AccessDeniedException {
         rentService.deleteById(id, userDetails);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(204).build();
     }
     @PostMapping("/stop/{id}")
     public ResponseEntity<RentStopResponse> editRentById(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) throws AccessDeniedException {
-        return ResponseEntity.ok(rentService.stopRentById(id, userDetails, LocalDateTime.now()));
+        return ResponseEntity.status(201).body(rentService.stopRentById(id, userDetails, LocalDateTime.now()));
     }
 }
