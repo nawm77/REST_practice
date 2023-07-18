@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "customer")
@@ -46,30 +45,31 @@ public class Customer implements UserDetails {
     private List<Bike> bikes;
     @OneToMany(mappedBy = "renter", fetch = FetchType.EAGER)
     private List<RentRequest> rentList;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> role = new HashSet<>();
-//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-//    private Set<CustomerRole> customerRole = new HashSet<>();
+//    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @JoinTable(
+//            name = "users_roles",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "role_id")
+//    )
+//    private Set<Role> role = new HashSet<>();
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<CustomerRole> customerRole = new HashSet<>();
     private Boolean isNonBlocked;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.stream()
-                .map(r -> new SimpleGrantedAuthority(r.getName()))
-                .collect(Collectors.toList());
-    }
 //    @Override
 //    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return customerRole.stream()
-//                .map(r -> new SimpleGrantedAuthority(r.getRole().getName()))
-//                .toList();
-//
+//        return role.stream()
+//                .map(r -> new SimpleGrantedAuthority(r.getName()))
+//                .collect(Collectors.toList());
 //    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return customerRole.stream()
+                .map(r -> new SimpleGrantedAuthority(r.getRole().getName()))
+                .toList();
+
+
+    }
 
     @Override
     public boolean isAccountNonExpired() {
