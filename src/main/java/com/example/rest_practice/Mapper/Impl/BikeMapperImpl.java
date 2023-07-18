@@ -16,12 +16,11 @@ public class BikeMapperImpl implements BikeMapper {
         this.modelMapper = modelMapper;
     }
 
-    public BikeDTO convertToDTO(Bike bike){
-        return modelMapper
-                .map(bike, BikeDTO.class);
+    public BikeDTO convertToDTO(Bike bike) {
+        return modelMapper.map(bike, BikeDTO.class);
     }
 
-    public Bike convertToBike(BikeDTO dto){
+    public Bike convertToBike(BikeDTO dto) {
         return modelMapper.map(dto, Bike.class);
     }
 }

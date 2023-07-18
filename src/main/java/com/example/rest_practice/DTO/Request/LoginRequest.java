@@ -10,10 +10,6 @@ import lombok.Getter;
 @Builder
 @Data
 public class LoginRequest {
-    @NotBlank(message = "Email is required")
-    @Size(min = 4, max = 32, message = "Email length must be more than 4")
     private String email;
-    @NotBlank(message = "Password is required")
-    @Size(min = 4, max = 32, message = "Password length must be more than 4")
     private String password;
 }
