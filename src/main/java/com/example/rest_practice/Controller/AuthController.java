@@ -9,6 +9,7 @@ import com.example.rest_practice.Service.CustomerService;
 import com.example.rest_practice.Service.LoginService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final CustomerService customerService;
     private final LoginService loginService;
+
     @Autowired
     public AuthController(CustomerService customerService, LoginService loginService) {
         this.customerService = customerService;
@@ -27,17 +29,17 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public LoginResponse login(@Valid @RequestBody LoginRequest request) throws Exception {
-        return LoginResponse.builder()
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) throws Exception {
+        return ResponseEntity.status(200).body(LoginResponse.builder()
                 .token(loginService.loginProcessor(request))
-                .build();
+                .build());
     }
 
     @PostMapping("/registration")
-    public RegistrationResponse registrationCustomer(@RequestBody @Valid Customer customer) throws DuplicateUserException {
+    public ResponseEntity<RegistrationResponse> registrationCustomer(@RequestBody @Valid Customer customer) throws DuplicateUserException {
         String token = customerService.createNewCustomer(customer);
-        return RegistrationResponse.builder()
+        return ResponseEntity.status(200).body(RegistrationResponse.builder()
                 .token(token)
-                .build();
+                .build());
     }
 }

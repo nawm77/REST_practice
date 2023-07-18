@@ -15,4 +15,6 @@ public class Role {
     private String name;
     @ManyToMany(mappedBy = "role", cascade = CascadeType.ALL)
     private Set<Customer> customer = new HashSet<>();
+//    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+//    private Set<CustomerRole> customerRoles = new HashSet<>();
 }

@@ -34,6 +34,7 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final CustomerMapper customerMapper;
+//    private final CustomerRoleRepository customerRoleRepository;
 
     @Autowired
     public CustomerServiceImpl(CustomerRepository customerRepository, RoleRepository roleRepository, JwtService jwtService, PasswordEncoder passwordEncoder, CustomerMapper customerMapper) {
@@ -42,6 +43,7 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.customerMapper = customerMapper;
+//        this.customerRoleRepository = customerRoleRepository;
     }
     public Optional<Customer> findByUsername(String username){
         return customerRepository.findByUsername(username);

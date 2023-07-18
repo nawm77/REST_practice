@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface RentRepository extends JpaRepository<RentRequest, Long> {
-    @Query("SELECT r from RentRequest r where r.renter.id = :renterId")
+    @Query("SELECT r from RentRequest r where r.renter.id = :renterId order by r.id desc")
     List<RentRequest> findAllByCustomerId(@Param("renterId") Long id);
 }

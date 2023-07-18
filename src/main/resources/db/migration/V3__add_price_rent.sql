@@ -1,0 +1,1 @@
+ALTER TABLE rent_request ADD price DOUBLE PRECISION

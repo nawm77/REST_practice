@@ -15,7 +15,7 @@ services:
     restart: always
   sharing:
     container_name: share_service
-    image: shareservice:1.0.0
+    image: shareservice:1.1.0
     ports:
       - "8080:8080"
     environment:

@@ -21,22 +21,26 @@ public class CustomerController {
         this.customerService = customerService;
         this.customerMapper = customerMapper;
     }
+
     @GetMapping("/list")
-    public ResponseEntity<List<CustomerDTO>> getAllCustomers(){
+    public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
         return ResponseEntity.ok(customerService.findAll());
     }
+
     @GetMapping("/list/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable("id") Long id) throws NoSuchElementException {
         return ResponseEntity.ok(customerMapper.convertToDTO(customerService.findById(id)));
     }
+
     @PostMapping("/block/{id}")
-    public ResponseEntity<?> blockCustomerById(@PathVariable("id") Long id){
+    public ResponseEntity<?> blockCustomerById(@PathVariable("id") Long id) {
         customerService.blockCustomerById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(204).build();
     }
+
     @PostMapping("/unblock/{id}")
-    public ResponseEntity<?> unblockCustomerById(@PathVariable("id") Long id){
+    public ResponseEntity<?> unblockCustomerById(@PathVariable("id") Long id) {
         customerService.unblockCustomerById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(204).build();
     }
 }

@@ -28,7 +28,7 @@ public class Customer implements UserDetails {
     @Size(min = 4, max = 16, message = "Username length must be between 4 and 16")
     private String username;
     @NotBlank(message = "Password is required")
-    @Size(min = 4, message = "Password must be between 4 and 32", max = 32)
+    @Size(min = 4, message = "Password must be between 4 and 32")
     private String password;
     @NotBlank(message = "Name is required")
     @Size(min = 2, max = 16, message = "Name length must be between 2 and 16")
@@ -53,6 +53,8 @@ public class Customer implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> role = new HashSet<>();
+//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+//    private Set<CustomerRole> customerRole = new HashSet<>();
     private Boolean isNonBlocked;
 
     @Override
@@ -61,6 +63,13 @@ public class Customer implements UserDetails {
                 .map(r -> new SimpleGrantedAuthority(r.getName()))
                 .collect(Collectors.toList());
     }
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return customerRole.stream()
+//                .map(r -> new SimpleGrantedAuthority(r.getRole().getName()))
+//                .toList();
+//
+//    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -82,19 +91,4 @@ public class Customer implements UserDetails {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", email='" + email + '\'' +
-                ", documentInformation=" + documentInformation +
-                ", bikes=" + bikes +
-                ", rentList=" + rentList +
-                ", role=" + role +
-                '}';
-    }
 }

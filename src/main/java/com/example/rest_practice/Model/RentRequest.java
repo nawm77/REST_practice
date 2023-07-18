@@ -23,4 +23,5 @@ public class RentRequest {
     @ManyToOne
     @JoinColumn(name = "bike_id")
     private Bike bike;
+    private Double price;
 }

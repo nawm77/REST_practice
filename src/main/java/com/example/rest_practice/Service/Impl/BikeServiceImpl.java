@@ -44,19 +44,29 @@ public class BikeServiceImpl implements BikeService {
     @Override
     public BikeDTO findBikeById(Long id) {
         Optional<Bike> b = bikeRepository.findById(id);
-        if(b.isPresent()){
+        if (b.isPresent()) {
             return mapper.convertToDTO(b.get());
-        } else{
+        } else {
             throw new EntityNotFoundException("No such bike with id " + id);
         }
     }
 
     @Override
-    public void saveBike(Bike bike, UserDetails userDetails){
-        bike.setStatus(RentStatus.AVAILABLE);
-        bike.setCustomer(customerRepository.findByUsername(userDetails.getUsername()).get());
-        bikeRepository.saveAndFlush(bike);
-        log.info("Successfully saved new bike " + mapper.convertToDTO(bike) + " by customer " + userDetails.getUsername());
+    public void saveBike(Bike bike, UserDetails userDetails) throws AccessDeniedException {
+        Optional<Bike> b = bikeRepository.findBikeBySerialNumber(bike.getSerialNumber());
+        if (b.isEmpty()) {
+            bike.setStatus(RentStatus.AVAILABLE);
+            bike.setCustomer(customerRepository.findByUsername(userDetails.getUsername()).get());
+            bikeRepository.saveAndFlush(bike);
+            log.info("Successfully saved new bike " + mapper.convertToDTO(bike) + " by customer " + userDetails.getUsername());
+        } else if (b.get().getStatus().equals(RentStatus.UNAVAILABLE)) {
+            Bike existingBike = bikeRepository.findBikeBySerialNumber(bike.getSerialNumber()).get();
+            bike.setStatus(RentStatus.AVAILABLE);
+            updateBikeInfo(existingBike.getId(), mapper.convertToDTO(bike), userDetails);
+            log.info("User " + userDetails.getUsername() + " successfully update status to " + bike.getStatus() + " for bike " + bike.getSerialNumber());
+        } else {
+            throw new AccessDeniedException("Bike with S/N: " + b.get().getSerialNumber() + " already exists");
+        }
     }
 
     @Override
@@ -71,7 +81,7 @@ public class BikeServiceImpl implements BikeService {
         if (existingBike == null) {
             throw new IllegalArgumentException("Bike data is required");
         }
-        if (!userDetails.getUsername().equals(existingBike.getCustomer().getUsername()) ){
+        if (!userDetails.getUsername().equals(existingBike.getCustomer().getUsername())) {
             throw new AccessDeniedException("You are not owner of bike with S/N " + updatedBikeDTO.getSerialNumber());
         }
 
@@ -93,24 +103,30 @@ public class BikeServiceImpl implements BikeService {
         if (updatedBikeDTO.getStatus() != null) {
             existingBike.setStatus(RentStatus.valueOf(updatedBikeDTO.getStatus()));
         }
-        saveBike(existingBike, userDetails);
+        bikeRepository.save(existingBike);
         log.info("User with username " + userDetails.getUsername() + " successfully changed information about " + mapper.convertToDTO(existingBike));
     }
 
     @Override
     public void deleteBikeById(Long id, UserDetails userDetails) throws AccessDeniedException {
         Optional<Bike> b = bikeRepository.findById(id);
-        if(b.isEmpty()){
+        if (b.isEmpty()) {
             throw new IllegalArgumentException("Bike with id " + id + " isn't presented");
         }
-        if(bikeRepository.findById(id).get().getCustomer().getUsername().equals(userDetails.getUsername())){
+        if (bikeRepository.findById(id).get().getCustomer().getUsername().equals(userDetails.getUsername())) {
             bikeRepository.setUnavailableStatusBySerialNumber(b.get().getSerialNumber());
-        }else{
+        } else {
             throw new AccessDeniedException("This isn't your bike");
         }
     }
+
     @Override
     public Bike findBikeBySerialNumber(String serialNumber) {
-        return bikeRepository.findBikeBySerialNumber(serialNumber);
+        Optional<Bike> b = bikeRepository.findBikeBySerialNumber(serialNumber);
+        if (b.isPresent()) {
+            return b.get();
+        } else {
+            throw new EntityNotFoundException("No su bike with S/N" + serialNumber);
+        }
     }
 }
