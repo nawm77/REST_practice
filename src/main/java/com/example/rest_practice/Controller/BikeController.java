@@ -4,7 +4,6 @@ import com.example.rest_practice.DTO.BikeDTO;
 import com.example.rest_practice.Mapper.BikeMapper;
 import com.example.rest_practice.Service.BikeService;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

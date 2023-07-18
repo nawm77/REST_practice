@@ -8,7 +8,6 @@ import com.example.rest_practice.Model.Customer;
 import com.example.rest_practice.Service.CustomerService;
 import com.example.rest_practice.Service.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
