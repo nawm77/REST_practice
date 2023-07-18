@@ -32,7 +32,6 @@ public class BikeServiceImpl implements BikeService {
         this.customerRepository = customerRepository;
     }
 
-    //TODO что быстрее - через ЯП или через БД
     @Override
     public List<BikeDTO> findAllAvailableBikes() {
         return bikeRepository.findAll()
