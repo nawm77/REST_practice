@@ -32,7 +32,8 @@ public class AuthController {
 
     @Operation(summary = "Login exists user", description = "Метод принимает LoginRequest для аутентификации пользователя и выдает токен")
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) throws Exception {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) throws Exception {
+        System.out.println("nn");
         return ResponseEntity.status(200).body(LoginResponse.builder()
                 .token(loginService.loginProcessor(request))
                 .build());

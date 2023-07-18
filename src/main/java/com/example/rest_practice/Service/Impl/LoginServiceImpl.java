@@ -24,6 +24,7 @@ public class LoginServiceImpl implements com.example.rest_practice.Service.Login
     @Override
     public String loginProcessor(LoginRequest loginRequest) throws Exception {
         Customer customer = customerService.findCustomerByEmail(loginRequest.getEmail());
+        System.out.println(customer.getEmail());
         if(passwordEncoder.matches(loginRequest.getPassword(), customer.getPassword())) {
             return jwtService.generateToken(customer);
         } else{
