@@ -3,6 +3,8 @@ package com.example.rest_practice.Controller;
 import com.example.rest_practice.DTO.BikeDTO;
 import com.example.rest_practice.Mapper.BikeMapper;
 import com.example.rest_practice.Service.BikeService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,7 +37,7 @@ public class BikeController {
 
     @PermitAll
     @GetMapping("/list/{id}")
-    public ResponseEntity<BikeDTO> findBikeById(@PathVariable("id") Long id) {
+    public ResponseEntity<BikeDTO> findBikeById(@PathVariable("id") @Parameter(description = "ID конкретного велосипеда") Long id) {
         return ResponseEntity.status(200).body(bikeService.findBikeById(id));
     }
     @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
