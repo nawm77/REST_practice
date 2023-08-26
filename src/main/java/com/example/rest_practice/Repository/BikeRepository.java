@@ -12,8 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface BikeRepository extends JpaRepository<Bike, Long> {
-//    @Query("select b from Bike b where b.serialNumber = :number")
-//    Bike findBikeBySerialNumber(@Param("number") String number);
     Optional<Bike> findBikeBySerialNumber(String number);
 
     @Transactional

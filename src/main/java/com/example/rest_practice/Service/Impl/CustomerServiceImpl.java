@@ -5,8 +5,9 @@ import com.example.rest_practice.Exception.DuplicateUserException;
 import com.example.rest_practice.Exception.UserNotFoundException;
 import com.example.rest_practice.Mapper.CustomerMapper;
 import com.example.rest_practice.Model.Customer;
-import com.example.rest_practice.Model.Role;
+import com.example.rest_practice.Model.CustomerRole;
 import com.example.rest_practice.Repository.CustomerRepository;
+import com.example.rest_practice.Repository.CustomerRoleRepository;
 import com.example.rest_practice.Repository.RoleRepository;
 import com.example.rest_practice.Service.CustomerService;
 import com.example.rest_practice.Service.JwtService;
@@ -34,16 +35,16 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final CustomerMapper customerMapper;
-//    private final CustomerRoleRepository customerRoleRepository;
+    private final CustomerRoleRepository customerRoleRepository;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository, RoleRepository roleRepository, JwtService jwtService, PasswordEncoder passwordEncoder, CustomerMapper customerMapper) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, RoleRepository roleRepository, JwtService jwtService, PasswordEncoder passwordEncoder, CustomerMapper customerMapper, CustomerRoleRepository customerRoleRepository) {
         this.customerRepository = customerRepository;
         this.roleRepository = roleRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.customerMapper = customerMapper;
-//        this.customerRoleRepository = customerRoleRepository;
+        this.customerRoleRepository = customerRoleRepository;
     }
     public Optional<Customer> findByUsername(String username){
         return customerRepository.findByUsername(username);
@@ -55,9 +56,9 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
         Customer customer = findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(String.format("Username '%s' isn't presented", username)));
         return new User(customer.getUsername(),
                 customer.getPassword(),
-                customer.getRole()
+                customer.getCustomerRole()
                         .stream()
-                        .map(role ->  new SimpleGrantedAuthority(role.getName()))
+                        .map(role ->  new SimpleGrantedAuthority(role.getRole().getName()))
                         .toList());
     }
 
@@ -85,18 +86,20 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
     @Transactional
     @Override
     public void setCustomerRole(Long id) {
-        Customer customer = customerRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("No such user"));
-        Customer fin = new Customer();
-        fin.setRole(Set.of(roleRepository.findById(2).get()));
-        customer.getRole().addAll(
-                fin
-                        .getRole().stream().map(r -> {
-                            Role rr = roleRepository.findById(r.getId()).get();
-                            rr.getCustomer().add(customer);
-                            return rr;
-                        }).toList()
-        );
-        customerRepository.save(customer);
+//        Customer customer = customerRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("No such user"));
+//        Customer fin = new Customer();
+//        fin.setRole(Set.of(roleRepository.findById(2).get()));
+//        customer.getRole().addAll(
+//                fin
+//                        .getRole().stream().map(r -> {
+//                            Role rr = roleRepository.findById(r.getId()).get();
+//                            rr.getCustomer().add(customer);
+//                            return rr;
+//                        }).toList()
+//        );
+//        customerRepository.save(customer);
+        Customer c = customerRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("No such user"));
+        customerRoleRepository.save(new CustomerRole(c, roleRepository.findById(2).get()));
     }
 
     @Override
@@ -104,7 +107,8 @@ public class CustomerServiceImpl implements UserDetailsService, CustomerService 
         if(customerRepository.findAllByUsername(customer.getUsername()).size()!=0 || customerRepository.findByEmail(customer.getEmail()).isPresent()){
             throw new DuplicateUserException("User with email: " + customer.getEmail() +" already exists in database");
         }
-        customer.setRole(Set.of(roleRepository.findById(1).get()));
+        customer.setCustomerRole(Set.of(new CustomerRole(customer, roleRepository.findById(1).get())));
+//        customer.setRole(Set.of(roleRepository.findById(1).get()));
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         customer.setIsNonBlocked(true);
         customerRepository.saveAndFlush(customer);

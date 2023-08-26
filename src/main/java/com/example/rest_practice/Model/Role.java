@@ -13,8 +13,8 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    @ManyToMany(mappedBy = "role", cascade = CascadeType.ALL)
-    private Set<Customer> customer = new HashSet<>();
-//    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-//    private Set<CustomerRole> customerRoles = new HashSet<>();
+//    @ManyToMany(mappedBy = "role", cascade = CascadeType.ALL)
+//    private Set<Customer> customer = new HashSet<>();
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<CustomerRole> customerRoles = new HashSet<>();
 }
