@@ -52,7 +52,7 @@ public class Customer implements UserDetails {
 //            inverseJoinColumns = @JoinColumn(name = "role_id")
 //    )
 //    private Set<Role> role = new HashSet<>();
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<CustomerRole> customerRole = new HashSet<>();
     private Boolean isNonBlocked;
 

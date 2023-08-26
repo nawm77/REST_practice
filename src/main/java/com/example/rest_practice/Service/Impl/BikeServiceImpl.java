@@ -2,11 +2,13 @@ package com.example.rest_practice.Service.Impl;
 
 import com.example.rest_practice.DTO.BikeDTO;
 import com.example.rest_practice.Mapper.BikeMapper;
+import com.example.rest_practice.Meter.MeterConst;
 import com.example.rest_practice.Model.Bike;
 import com.example.rest_practice.Model.RentStatus;
 import com.example.rest_practice.Repository.BikeRepository;
 import com.example.rest_practice.Repository.CustomerRepository;
 import com.example.rest_practice.Service.BikeService;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +18,18 @@ import org.springframework.stereotype.Service;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Log4j2
 public class BikeServiceImpl implements BikeService {
+    private final MeterRegistry meterRegistry;
     private final BikeRepository bikeRepository;
     private final BikeMapper mapper;
     private final CustomerRepository customerRepository;
 
     @Autowired
-    public BikeServiceImpl(BikeRepository bikeRepository, BikeMapper mapper, CustomerRepository customerRepository) {
+    public BikeServiceImpl(MeterRegistry meterRegistry, BikeRepository bikeRepository, BikeMapper mapper, CustomerRepository customerRepository) {
+        this.meterRegistry = meterRegistry;
         this.bikeRepository = bikeRepository;
         this.mapper = mapper;
         this.customerRepository = customerRepository;
@@ -38,7 +41,7 @@ public class BikeServiceImpl implements BikeService {
                 .stream()
                 .filter(bike -> bike.getStatus().equals(RentStatus.AVAILABLE))
                 .map(mapper::convertToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -58,6 +61,9 @@ public class BikeServiceImpl implements BikeService {
             bike.setStatus(RentStatus.AVAILABLE);
             bike.setCustomer(customerRepository.findByUsername(userDetails.getUsername()).get());
             bikeRepository.saveAndFlush(bike);
+            meterRegistry.counter(MeterConst.USER_SAVED_BIKES,
+                    MeterConst.USER_TAG_NAME, userDetails.getUsername()).increment();
+            meterRegistry.counter(MeterConst.SAVED_BIKES).increment();
             log.info("Successfully saved new bike " + mapper.convertToDTO(bike) + " by customer " + userDetails.getUsername());
         } else if (b.get().getStatus().equals(RentStatus.UNAVAILABLE)) {
             Bike existingBike = bikeRepository.findBikeBySerialNumber(bike.getSerialNumber()).get();
@@ -114,6 +120,7 @@ public class BikeServiceImpl implements BikeService {
             existingBike.setStatus(RentStatus.valueOf(updatedBikeDTO.getStatus()));
         }
         bikeRepository.save(existingBike);
+
         log.info("User with username " + userDetails.getUsername() + " successfully changed information about " + mapper.convertToDTO(existingBike));
     }
 
@@ -124,7 +131,7 @@ public class BikeServiceImpl implements BikeService {
             log.info("Bike with id " + id + " isn't presented");
             throw new IllegalArgumentException("Bike with id " + id + " isn't presented");
         }
-        if (bikeRepository.findById(id).get().getCustomer().getUsername().equals(userDetails.getUsername())) {
+        if (b.get().getCustomer().getUsername().equals(userDetails.getUsername())) {
             log.info("Bike with S/N " + b.get().getSerialNumber() + " now Unavailable to rental");
             bikeRepository.setUnavailableStatusBySerialNumber(b.get().getSerialNumber());
         } else {
