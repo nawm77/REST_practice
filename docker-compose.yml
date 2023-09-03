@@ -8,14 +8,12 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: bikeShare
       PGDATA: /data/postgres
-    volumes:
-      - .:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     restart: always
   sharing:
     container_name: share_service
-    image: shareservice:1.2.1
+    image: shareservice:1.3.2
     ports:
       - "8080:8080"
     environment:
@@ -30,10 +28,13 @@ services:
     container_name: prometheus
     image: prom/prometheus
     ports:
-      - "9090:9090"
+      - "90:9090"
     volumes:
       - ./src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml
     restart: always
+    depends_on:
+      - sharing
+
   grafana:
     container_name: grafana
     image: grafana/grafana
@@ -41,6 +42,3 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
-volumes:
-  postgres:
-
