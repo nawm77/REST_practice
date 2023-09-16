@@ -29,7 +29,7 @@ services:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
       interval: 20s
       timeout: 10s
-      retries: 5
+      retries: 10
       start_period: 5s
   prometheus:
     container_name: prometheus
