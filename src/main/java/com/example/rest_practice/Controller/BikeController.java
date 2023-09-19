@@ -3,6 +3,7 @@ package com.example.rest_practice.Controller;
 import com.example.rest_practice.DTO.BikeDTO;
 import com.example.rest_practice.Mapper.BikeMapper;
 import com.example.rest_practice.Service.BikeService;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.security.PermitAll;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +27,13 @@ import java.util.List;
 public class BikeController {
     private final BikeService bikeService;
     private final BikeMapper bikeMapper;
+    private final MeterRegistry meterRegistry;
 
     @Autowired
-    public BikeController(BikeService bikeService, BikeMapper bikeMapper) {
+    public BikeController(BikeService bikeService, BikeMapper bikeMapper, MeterRegistry meterRegistry) {
         this.bikeService = bikeService;
         this.bikeMapper = bikeMapper;
+        this.meterRegistry = meterRegistry;
     }
 
     @PermitAll
@@ -52,7 +54,7 @@ public class BikeController {
     public ResponseEntity<?> findBikeById(@PathVariable("id") @Parameter(description = "ID конкретного велосипеда") Long id) {
         try {
             return ResponseEntity.status(200).body(bikeService.findBikeById(id));
-        } catch (EntityNotFoundException e){
+        } catch (Exception e){
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }

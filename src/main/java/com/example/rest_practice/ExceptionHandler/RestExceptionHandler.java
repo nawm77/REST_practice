@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
@@ -24,10 +24,10 @@ public class RestExceptionHandler {
 //                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 //        return errors;
 //    }
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<?> unexpectedException(Exception ex) {
-//        HttpStatus serverError = INTERNAL_SERVER_ERROR;
-//        ApiException apiException = new ApiException(ex.getMessage(), serverError);
-//        return new ResponseEntity<>(apiException, serverError);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> unexpectedException(Exception ex) {
+        HttpStatus serverError = BAD_REQUEST;
+        ApiException apiException = new ApiException(ex.getMessage(), serverError);
+        return new ResponseEntity<>(apiException, serverError);
+    }
 }

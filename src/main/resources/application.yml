@@ -19,6 +19,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   flyway:
     enabled: false
+  data:
+    mongodb:
+      database: bikeService
+      uri: mongodb://localhost:27017/bikeService
+      port: 27017
+
 management:
   endpoint:
     health:
