@@ -26,7 +26,7 @@ services:
     depends_on:
       - postgres
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+      test: [ "CMD", "curl", "-f", "http://sharing:8080/ping" ]
       interval: 20s
       timeout: 10s
       retries: 10
@@ -38,9 +38,10 @@ services:
       - "90:9090"
     volumes:
       - ./src/main/resources/prometheus-docker.yml:/etc/prometheus/prometheus.yml
+#      - ./src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml
     restart: always
-    depends_on:
-      - sharing
+#    depends_on:
+#      - sharing
   grafana:
     container_name: grafana
     image: grafana/grafana
@@ -54,5 +55,5 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./mongo:/data/db:ro
+      - ./mongo:/data/db
     restart: always

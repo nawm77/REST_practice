@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-deploy
+  labels:
+    app: sharing
+    type: monitoring-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      type: monitoring-deploy
+  template:
+    metadata:
+      labels:
+        type: monitoring-deploy
+    spec:
+      containers:
+        - name: grafana
+          imagePullPolicy: IfNotPresent
+          image: grafana/grafana
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+              name: grafana-port
+        - name: prometheus
+          image: prom/prometheus
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9090
+              protocol: TCP
+              name: prometheus-port
+          volumeMounts:
+            - mountPath: /etc/prometheus/prometheus.yml
+              name: prometheuscfg
+      volumes:
+        - name: prometheuscfg
+          hostPath:
+            path: ../src/main/resources/prometheus-k8s.yml
