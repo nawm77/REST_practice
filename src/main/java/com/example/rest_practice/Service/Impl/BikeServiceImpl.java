@@ -120,6 +120,7 @@ public class BikeServiceImpl implements BikeService {
             existingBike.setStatus(RentStatus.valueOf(updatedBikeDTO.getStatus()));
         }
         bikeRepository.save(existingBike);
+        meterRegistry.counter("updated").increment();
 
         log.info("User with username " + userDetails.getUsername() + " successfully changed information about " + mapper.convertToDTO(existingBike));
     }

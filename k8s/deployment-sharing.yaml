@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sharing-deploy
+  labels:
+    app: sharing
+    type: sharing-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      type: sharing-deploy
+  template:
+    metadata:
+      labels:
+        type: sharing-deploy
+    spec:
+      containers:
+        - name: sharing
+          image: sharing
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+              name: sharing-port
+          env:
+#        TODO посмотреть как заполнять секреты и вставить реализацию секретов  +  посомтреть конфигмап и внедрить при необходимости
+            - name: SPRING_DATASOURSE_PASSWORD
+              value: "root"
+            - name: SPRING_DATASOURSE_USERNAME
+              value: "postgres"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://service-sharing:5432/bikeShare"
+            - name: SPRING_JPA_HIBERNATE_DDL-AUTO
+              value: "none"
+            - name: SPRING_FLYWAY_ENABLED
+              value: "True"

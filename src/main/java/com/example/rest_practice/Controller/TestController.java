@@ -52,4 +52,5 @@ public class TestController {
     public ResponseEntity<?> getByName(@PathVariable("name") String name){
         return ResponseEntity.ok(bikeRepositoryMongo.findByName(name));
     }
+
 }
